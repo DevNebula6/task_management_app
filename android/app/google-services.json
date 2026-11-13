@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "437032080135",
+    "project_id": "groupsync-491814",
+    "storage_bucket": "groupsync-491814.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437032080135:android:925158c903542e5225aba2",
+        "android_client_info": {
+          "package_name": "com.example.task_management_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "437032080135-a0eg8g5eu9i4knf4m0t7ae6kmuqg581p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbiCZQ7W_ssR7DeSxeougRZy3r4G38WlY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437032080135-a0eg8g5eu9i4knf4m0t7ae6kmuqg581p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437032080135:android:cdd36dedbe805bb925aba2",
+        "android_client_info": {
+          "package_name": "com.meet.groupsync"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "437032080135-a0eg8g5eu9i4knf4m0t7ae6kmuqg581p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbiCZQ7W_ssR7DeSxeougRZy3r4G38WlY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437032080135-a0eg8g5eu9i4knf4m0t7ae6kmuqg581p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
