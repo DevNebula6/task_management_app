@@ -51,6 +51,8 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           if (state is AuthError) {
             AppSnackBar.showError(context, state.message);
+          } else if (state is Authenticated) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
           }
         },
         builder: (context, state) {
@@ -140,6 +142,21 @@ class _LoginPageState extends State<LoginPage> {
                         isLoading: isLoading,
                         onPressed: _onLoginPressed,
                       ),
+                      const SizedBox(height: AppDimensions.p12),
+
+                      // 1-Tap Demo Login
+                      CustomButton(
+                        text: '1-Tap Demo Login',
+                        isOutlined: true,
+                        icon: Icons.flash_on_rounded,
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                _emailController.text = 'demo@whatbytes.com';
+                                _passwordController.text = 'password123';
+                                _onLoginPressed();
+                              },
+                      ),
                       const SizedBox(height: AppDimensions.p28),
 
                       // Social Decor
@@ -186,3 +203,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+

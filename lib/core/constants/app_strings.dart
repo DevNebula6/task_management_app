@@ -51,3 +51,4 @@ class AppStrings {
   static const String emptyTasksTitle = 'No tasks found';
   static const String emptyTasksSubtitle = 'You are all caught up! Tap + to create a task.';
 }
+

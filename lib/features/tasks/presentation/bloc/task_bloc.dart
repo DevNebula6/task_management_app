@@ -194,3 +194,4 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     return super.close();
   }
 }
+

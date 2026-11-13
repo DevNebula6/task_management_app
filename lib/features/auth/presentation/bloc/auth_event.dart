@@ -42,3 +42,4 @@ class AuthRegisterSubmitted extends AuthEvent {
 class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }
+

@@ -10,3 +10,4 @@ class LogoutUseCase {
     return repository.signOut();
   }
 }
+

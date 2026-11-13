@@ -15,3 +15,4 @@ class GetTasksUseCase {
     return repository.getTasksStream(userId);
   }
 }
+

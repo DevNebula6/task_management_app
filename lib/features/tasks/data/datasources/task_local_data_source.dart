@@ -94,3 +94,4 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
     return tasksBox.watch().map((_) => getCachedTasks(userId: userId));
   }
 }
+

@@ -39,6 +39,8 @@ class AuthFailure extends Failure {
         return const AuthFailure('Network error. Please check your internet connection.');
       case 'too-many-requests':
         return const AuthFailure('Too many failed attempts. Please try again later.');
+      case 'operation-not-allowed':
+        return const AuthFailure('Email/password sign-in is not enabled in Firebase Console.');
       default:
         return AuthFailure('Authentication failed ($code). Please try again.');
     }
@@ -48,3 +50,4 @@ class AuthFailure extends Failure {
 class ValidationFailure extends Failure {
   const ValidationFailure(super.message);
 }
+

@@ -92,3 +92,4 @@ class TaskOperationFailure extends TaskState {
   @override
   List<Object?> get props => [message];
 }
+

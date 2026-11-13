@@ -11,3 +11,4 @@ class UpdateTaskUseCase {
     return repository.updateTask(task);
   }
 }
+

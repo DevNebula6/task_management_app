@@ -11,3 +11,4 @@ class CreateTaskUseCase {
     return repository.createTask(task);
   }
 }
+

@@ -81,3 +81,4 @@ class TaskModel extends TaskEntity {
     };
   }
 }
+

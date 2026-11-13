@@ -14,3 +14,4 @@ class ToggleTaskStatusUseCase {
     return repository.toggleTaskStatus(taskId, userId, isCompleted);
   }
 }
+

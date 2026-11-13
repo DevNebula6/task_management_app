@@ -44,3 +44,4 @@ class AppColors {
   static Color shadow = const Color(0xFF1E202B).withValues(alpha: 0.06);
   static Color shadowHeavy = const Color(0xFF5B50E5).withValues(alpha: 0.25);
 }
+

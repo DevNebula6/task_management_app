@@ -8,6 +8,7 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/auth/presentation/bloc/auth_state.dart';
+import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/onboarding_page.dart';
 import 'features/tasks/presentation/bloc/task_bloc.dart';
 import 'features/tasks/presentation/pages/home_page.dart';
@@ -66,8 +67,15 @@ class TaskManagementApp extends StatelessWidget {
   }
 }
 
-class AuthGate extends StatelessWidget {
+class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  bool _showOnboarding = true;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +86,14 @@ class AuthGate extends StatelessWidget {
         }
 
         if (state is Unauthenticated || state is AuthError) {
-          return const OnboardingPage();
+          if (_showOnboarding) {
+            return OnboardingPage(
+              onGetStarted: () {
+                setState(() => _showOnboarding = false);
+              },
+            );
+          }
+          return const LoginPage();
         }
 
         return const Scaffold(

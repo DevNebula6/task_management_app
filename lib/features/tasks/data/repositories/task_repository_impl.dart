@@ -22,9 +22,14 @@ class TaskRepositoryImpl implements TaskRepository {
     StreamSubscription? remoteSub;
 
     controller = StreamController<List<TaskEntity>>.broadcast(
-      onListen: () {
+      onListen: () async {
         // Emit cached tasks right away
-        final cached = localDataSource.getCachedTasks(userId: userId);
+        var cached = localDataSource.getCachedTasks(userId: userId);
+        if (cached.isEmpty) {
+          final samples = _createSampleTasks(userId);
+          await localDataSource.cacheTasks(samples);
+          cached = localDataSource.getCachedTasks(userId: userId);
+        }
         controller.add(cached);
 
         // Listen to remote changes
@@ -139,4 +144,71 @@ class TaskRepositoryImpl implements TaskRepository {
       return Left(CacheFailure(e.toString()));
     }
   }
+
+  List<TaskModel> _createSampleTasks(String userId) {
+    final now = DateTime.now();
+    return [
+      TaskModel(
+        id: 'sample_1',
+        userId: userId,
+        title: 'Schedule dentist appointment',
+        description: 'Routine six-month checkup and cleaning',
+        dueDate: DateTime(now.year, now.month, now.day, 10, 0),
+        priority: TaskPriority.low,
+        isCompleted: false,
+        createdAt: now,
+      ),
+      TaskModel(
+        id: 'sample_2',
+        userId: userId,
+        title: 'Prepare team meeting',
+        description: 'Review weekly gig worker milestones and delivery metrics',
+        dueDate: DateTime(now.year, now.month, now.day, 14, 30),
+        priority: TaskPriority.medium,
+        isCompleted: false,
+        createdAt: now,
+      ),
+      TaskModel(
+        id: 'sample_3',
+        userId: userId,
+        title: 'Call Charlotte',
+        description: 'Discuss delivery schedule and route optimization',
+        dueDate: DateTime(now.year, now.month, now.day + 1, 11, 0),
+        priority: TaskPriority.high,
+        isCompleted: false,
+        createdAt: now,
+      ),
+      TaskModel(
+        id: 'sample_4',
+        userId: userId,
+        title: 'Submit exercise 3.1',
+        description: 'Upload client delivery confirmation and receipts',
+        dueDate: DateTime(now.year, now.month, now.day + 1, 17, 0),
+        priority: TaskPriority.low,
+        isCompleted: false,
+        createdAt: now,
+      ),
+      TaskModel(
+        id: 'sample_5',
+        userId: userId,
+        title: 'Prepare A/B test',
+        description: 'Compare dispatch latency across delivery zones',
+        dueDate: DateTime(now.year, now.month, now.day + 3, 16, 0),
+        priority: TaskPriority.high,
+        isCompleted: false,
+        createdAt: now,
+      ),
+      TaskModel(
+        id: 'sample_6',
+        userId: userId,
+        title: 'Submit exercise 3.2',
+        description: 'Finalize weekly mileage report and fuel reimbursements',
+        dueDate: DateTime(now.year, now.month, now.day + 4, 18, 0),
+        priority: TaskPriority.medium,
+        isCompleted: false,
+        createdAt: now,
+      ),
+    ];
+  }
 }
+

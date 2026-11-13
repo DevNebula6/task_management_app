@@ -10,3 +10,4 @@ abstract class TaskRepository {
   Future<Either<Failure, void>> deleteTask(String taskId, String userId);
   Future<Either<Failure, void>> toggleTaskStatus(String taskId, String userId, bool isCompleted);
 }
+

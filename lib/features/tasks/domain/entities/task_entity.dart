@@ -100,3 +100,4 @@ class TaskEntity extends Equatable {
         createdAt,
       ];
 }
+

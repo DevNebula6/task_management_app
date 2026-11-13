@@ -9,3 +9,4 @@ class GetAuthStateUseCase {
     return repository.authStateChanges;
   }
 }
+

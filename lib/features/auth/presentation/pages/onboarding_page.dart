@@ -5,7 +5,9 @@ import '../../../../core/constants/app_strings.dart';
 import 'login_page.dart';
 
 class OnboardingPage extends StatelessWidget {
-  const OnboardingPage({super.key});
+  final VoidCallback? onGetStarted;
+
+  const OnboardingPage({super.key, this.onGetStarted});
 
   @override
   Widget build(BuildContext context) {
@@ -156,9 +158,13 @@ class OnboardingPage extends StatelessWidget {
                       // Next Floating Circular Action Button (Reference1.png)
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const LoginPage()),
-                          );
+                          if (onGetStarted != null) {
+                            onGetStarted!();
+                          } else {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (_) => const LoginPage()),
+                            );
+                          }
                         },
                         borderRadius: BorderRadius.circular(AppDimensions.rFull),
                         child: Container(
@@ -229,3 +235,4 @@ class _TopCurvedClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
+

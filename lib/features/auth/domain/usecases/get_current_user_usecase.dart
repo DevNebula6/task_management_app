@@ -11,3 +11,4 @@ class GetCurrentUserUseCase {
     return repository.getCurrentUser();
   }
 }
+
