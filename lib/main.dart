@@ -1,9 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/constants/app_colors.dart';
 import 'core/constants/app_strings.dart';
 import 'core/theme/app_theme.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/bloc/auth_event.dart';
+import 'features/auth/presentation/bloc/auth_state.dart';
+import 'features/auth/presentation/pages/onboarding_page.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
 
@@ -40,15 +45,58 @@ class TaskManagementApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
+    return BlocProvider<AuthBloc>(
+      create: (_) => di.sl<AuthBloc>()..add(const AuthCheckRequested()),
+      child: MaterialApp(
+        title: AppStrings.appName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        home: const AuthGate(),
       ),
+    );
+  }
+}
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is Authenticated) {
+          // Placeholder for Phase 2, will be replaced with HomePage in Phase 4
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Task Tracker'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    context.read<AuthBloc>().add(const AuthLogoutRequested());
+                  },
+                ),
+              ],
+            ),
+            body: Center(
+              child: Text(
+                'Welcome, ${state.user.displayName ?? state.user.email}!',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
+        }
+
+        if (state is Unauthenticated || state is AuthError) {
+          return const OnboardingPage();
+        }
+
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+        );
+      },
     );
   }
 }
