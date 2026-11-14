@@ -164,32 +164,36 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: AppDimensions.p32),
 
                       // Switch to Sign Up
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            AppStrings.doNotHaveAccount,
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 14,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => const SignupPage()),
-                              );
-                            },
-                            child: const Text(
-                              AppStrings.signup,
+                      Center(
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 4,
+                          children: [
+                            const Text(
+                              AppStrings.doNotHaveAccount,
                               style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
+                                color: AppColors.textSecondary,
                                 fontSize: 14,
                               ),
                             ),
-                          ),
-                        ],
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const SignupPage()),
+                                );
+                              },
+                              child: const Text(
+                                AppStrings.signup,
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: AppDimensions.p20),
                     ],

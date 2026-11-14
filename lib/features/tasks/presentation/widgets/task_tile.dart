@@ -20,15 +20,28 @@ class TaskTile extends StatelessWidget {
     required this.onDelete,
   });
 
+  IconData _getPriorityIcon(TaskPriority priority) {
+    switch (priority) {
+      case TaskPriority.high:
+        return Icons.local_fire_department_rounded;
+      case TaskPriority.medium:
+        return Icons.bolt_rounded;
+      case TaskPriority.low:
+        return Icons.spa_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isOverdue = DateFormatter.isOverdue(task.dueDate) && !task.isCompleted;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDimensions.p12),
       child: Slidable(
         key: ValueKey(task.id),
         endActionPane: ActionPane(
           motion: const BehindMotion(),
-          extentRatio: 0.35,
+          extentRatio: 0.38,
           children: [
             // Edit Action
             CustomSlidableAction(
@@ -40,6 +53,10 @@ class TaskTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
                 ),
                 child: const Icon(
                   Icons.edit_outlined,
@@ -58,6 +75,17 @@ class TaskTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.priorityHighBg,
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.priorityHigh.withValues(alpha: 0.25),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.priorityHigh.withValues(alpha: 0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.delete_outline_rounded,
@@ -70,49 +98,78 @@ class TaskTile extends StatelessWidget {
         ),
         child: InkWell(
           onTap: onEdit,
-          borderRadius: BorderRadius.circular(AppDimensions.r16),
-          child: Container(
+          borderRadius: BorderRadius.circular(AppDimensions.r20),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
             padding: const EdgeInsets.all(AppDimensions.p16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppDimensions.r16),
+              color: task.isCompleted
+                  ? const Color(0xFFFBFBFE)
+                  : AppColors.surface,
+              borderRadius: BorderRadius.circular(AppDimensions.r20),
               border: Border.all(
-                color: task.isCompleted ? AppColors.border.withValues(alpha: 0.6) : AppColors.border,
-                width: 1,
+                color: task.isCompleted
+                    ? AppColors.border.withValues(alpha: 0.5)
+                    : isOverdue
+                        ? AppColors.priorityHighBorder
+                        : AppColors.border,
+                width: isOverdue ? 1.4 : 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
+                  color: task.isCompleted
+                      ? Colors.transparent
+                      : Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Row(
               children: [
-                // Custom Circular Checkbox
+                // Custom Interactive Circular Checkbox with Spring Animation
                 GestureDetector(
                   key: Key('task_checkbox_${task.id}'),
                   onTap: () {
-                    HapticFeedback.lightImpact();
+                    HapticFeedback.mediumImpact();
                     onToggleStatus(!task.isCompleted);
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 26,
-                    height: 26,
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOutBack,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
-                      color: task.isCompleted ? AppColors.primary : Colors.transparent,
+                      gradient: task.isCompleted
+                          ? const LinearGradient(
+                              colors: [
+                                AppColors.primaryLight,
+                                AppColors.primary,
+                              ],
+                            )
+                          : null,
+                      color: task.isCompleted ? null : Colors.transparent,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: task.isCompleted ? AppColors.primary : AppColors.border,
+                        color: task.isCompleted
+                            ? AppColors.primary
+                            : AppColors.border,
                         width: 2,
                       ),
+                      boxShadow: task.isCompleted
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: task.isCompleted
                         ? const Icon(
                             Icons.check_rounded,
-                            size: 16,
+                            size: 17,
                             color: Colors.white,
                           )
                         : null,
@@ -139,6 +196,7 @@ class TaskTile extends StatelessWidget {
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
                           decorationColor: AppColors.textMuted,
+                          letterSpacing: -0.2,
                         ),
                       ),
                       if (task.description.isNotEmpty) ...[
@@ -149,7 +207,10 @@ class TaskTile extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textSecondary.withValues(alpha: 0.8),
+                            color: task.isCompleted
+                                ? AppColors.textMuted.withValues(alpha: 0.7)
+                                : AppColors.textSecondary,
+                            height: 1.3,
                           ),
                         ),
                       ],
@@ -157,21 +218,28 @@ class TaskTile extends StatelessWidget {
                       Row(
                         children: [
                           Icon(
-                            Icons.access_time_rounded,
+                            isOverdue
+                                ? Icons.warning_amber_rounded
+                                : Icons.access_time_rounded,
                             size: 13,
-                            color: DateFormatter.isOverdue(task.dueDate) && !task.isCompleted
+                            color: isOverdue
                                 ? AppColors.error
                                 : AppColors.textMuted,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            '${DateFormatter.formatShort(task.dueDate)} • ${DateFormatter.formatTime(task.dueDate)}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: DateFormatter.isOverdue(task.dueDate) && !task.isCompleted
-                                  ? AppColors.error
-                                  : AppColors.textSecondary,
+                          Expanded(
+                            child: Text(
+                              isOverdue
+                                  ? 'Overdue • ${DateFormatter.formatShort(task.dueDate)}'
+                                  : '${DateFormatter.formatShort(task.dueDate)} • ${DateFormatter.formatTime(task.dueDate)}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: isOverdue ? FontWeight.w700 : FontWeight.w500,
+                                color: isOverdue
+                                    ? AppColors.error
+                                    : AppColors.textSecondary,
+                              ),
                             ),
                           ),
                         ],
@@ -181,20 +249,35 @@ class TaskTile extends StatelessWidget {
                 ),
                 const SizedBox(width: AppDimensions.p12),
 
-                // Priority Badge Pill (Reference2.png)
+                // Priority Badge Pill with Icon (Reference2.png)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
                   decoration: BoxDecoration(
                     color: task.priority.backgroundColor,
                     borderRadius: BorderRadius.circular(AppDimensions.rFull),
-                  ),
-                  child: Text(
-                    task.priority.label,
-                    style: TextStyle(
-                      color: task.priority.color,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                    border: Border.all(
+                      color: task.priority.color.withValues(alpha: 0.3),
+                      width: 1,
                     ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _getPriorityIcon(task.priority),
+                        size: 12,
+                        color: task.priority.color,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        task.priority.label,
+                        style: TextStyle(
+                          color: task.priority.color,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

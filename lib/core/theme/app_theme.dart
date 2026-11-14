@@ -25,19 +25,22 @@ class AppTheme {
       textTheme: TextTheme(
         displayLarge: TextStyle(
           color: AppColors.textPrimary,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w800,
           fontFamily: poppinsFamily,
+          letterSpacing: -0.5,
         ),
         headlineMedium: TextStyle(
           color: AppColors.textPrimary,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
           fontFamily: poppinsFamily,
+          letterSpacing: -0.5,
         ),
         titleLarge: TextStyle(
           color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           fontSize: 20,
           fontFamily: poppinsFamily,
+          letterSpacing: -0.3,
         ),
         titleMedium: TextStyle(
           color: AppColors.textPrimary,
@@ -49,11 +52,13 @@ class AppTheme {
           color: AppColors.textPrimary,
           fontSize: 15,
           fontFamily: poppinsFamily,
+          fontWeight: FontWeight.w400,
         ),
         bodyMedium: TextStyle(
           color: AppColors.textSecondary,
           fontSize: 13,
           fontFamily: poppinsFamily,
+          fontWeight: FontWeight.w400,
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -74,7 +79,7 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.r16),
+          borderRadius: BorderRadius.circular(AppDimensions.r20),
           side: const BorderSide(color: AppColors.border, width: 1),
         ),
       ),
@@ -147,7 +152,7 @@ class AppTheme {
         backgroundColor: AppColors.surface,
         elevation: 16,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.r24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.r32)),
         ),
       ),
     );

@@ -115,6 +115,14 @@ class _HomePageState extends State<HomePage> {
           }
         },
         builder: (context, state) {
+          final int totalTasks = state is TaskLoaded ? state.allTasks.length : 0;
+          final int completedTasks = state is TaskLoaded
+              ? state.allTasks.where((t) => t.isCompleted).length
+              : 0;
+          final int pendingTasks = state is TaskLoaded
+              ? state.allTasks.where((t) => !t.isCompleted).length
+              : 0;
+
           return Column(
             children: [
               // 1. Curved Indigo Header (Reference2.png)
@@ -122,6 +130,9 @@ class _HomePageState extends State<HomePage> {
                 userName: widget.user.displayName ?? widget.user.email,
                 searchController: _searchController,
                 onSearchChanged: _onSearchChanged,
+                totalTasks: totalTasks,
+                completedTasks: completedTasks,
+                pendingTasks: pendingTasks,
                 onLogout: () {
                   context.read<AuthBloc>().add(const AuthLogoutRequested());
                 },
@@ -133,6 +144,9 @@ class _HomePageState extends State<HomePage> {
                 FilterChipsBar(
                   selectedStatus: state.statusFilter,
                   selectedPriority: state.priorityFilter,
+                  allCount: totalTasks,
+                  incompleteCount: pendingTasks,
+                  completedCount: completedTasks,
                   onStatusSelected: (status) {
                     context.read<TaskBloc>().add(
                           TaskFilterChanged(statusFilter: status),
@@ -221,6 +235,16 @@ class _HomePageState extends State<HomePage> {
         child: TaskGroupedList(
           key: ValueKey('${state.statusFilter}_${state.priorityFilter}_${state.filteredTasks.length}'),
           tasks: state.filteredTasks,
+          onResetFilters: () {
+            _searchController.clear();
+            context.read<TaskBloc>().add(
+                  const TaskFilterChanged(
+                    statusFilter: TaskStatusFilter.all,
+                    priorityFilter: TaskPriorityFilter.all,
+                    searchQuery: '',
+                  ),
+                );
+          },
           onToggleStatus: (task) {
             context.read<TaskBloc>().add(
                   TaskStatusToggled(

@@ -93,15 +93,16 @@ The user interface follows the reference mockups attached in the assignment spec
 - **1-Tap Demo Login:** Instantly populates credentials (`demo@whatbytes.com`) and signs into local offline evaluation mode.
 - **Social Decor:** Circular bordered badges matching `Reference1.png`.
 
-### 3. Task Dashboard (`Reference2.png`)
+### 3. Task Dashboard (`Reference2.png`) & Impeccable UI Craft
 ```text
 +------------------------------------------+
-|  Today, 14 Nov                     [->]  |
-|  My tasks                                |
+|  Good morning • Vineet             [->]  |
+|  Today, 14 Nov                     98%   |
+|  [=========== Shift Progress ===========]|
 |  [ 🔍 Search tasks...                  ] |
 +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-|  [ All ] [ Incomplete ] [ Completed ]    | (Status Chips)
-|  [ All ] [🔴 High] [🟠 Medium] [🟢 Low]  | (Priority Chips)
+|  [ All (6) ] [ Incomplete (4) ] [ Completed (2) ]
+|  [ All ] [🔴 High] [🟠 Medium] [🟢 Low]  |
 |                                          |
 |  TODAY (2)                               |
 |  +-------------------------------------+ |
@@ -119,10 +120,12 @@ The user interface follows the reference mockups attached in the assignment spec
 |      (List)          (+)        (📅)     | (Docked Center FAB)
 +------------------------------------------+
 ```
-- **Curved Indigo Header:** Displays current formatted date, greeting, logout button, and pill search bar.
-- **Filter Chips Bar:** Dual horizontal scrollable chip rows for Status and Priority.
-- **Grouped Section Headers:** Automatically segments tasks into **Today**, **Tomorrow**, **This week**, **Later**, and **Overdue**.
-- **Slidable Task Tiles:** Swipe left to reveal circular Edit and Delete actions (`flutter_slidable`).
+- **Curved Indigo Header:** Displays contextual shift greeting (`Good morning / afternoon / evening`), live formatted date, logout button, and glassmorphic pill search bar.
+- **Productivity Progress Bar:** Real-time animated emerald progress indicator tracking shift completion percentage.
+- **Segmented Filter Pills:** Modern pill tabs with reactive counter badges `(All, Incomplete, Completed)` and tinted priority badges (`High`, `Medium`, `Low`).
+- **Grouped Section Headers:** Automatically segments tasks into **Overdue**, **Today**, **Tomorrow**, **This week**, and **Later** with uppercase tracking and category badges.
+- **Micro-Interactions & Slidable Tiles:** Spring scale animation and haptic feedback on task completion checkboxes, plus smooth swipe-to-reveal quick actions (`flutter_slidable`).
+- **Smart Quick-Presets in Creation Sheet:** One-tap presets (`+1 Hour`, `This Afternoon`, `Tomorrow Morning`) alongside date & time pickers for rapid gig dispatching.
 - **Docked FAB & Curved Bottom Bar:** Central purple floating `+` button docked with `CircularNotchedRectangle`.
 
 ---

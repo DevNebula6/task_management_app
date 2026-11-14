@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
@@ -73,6 +74,15 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
     super.dispose();
   }
 
+  void _applyQuickPreset(Duration offset, int hour, int minute) {
+    HapticFeedback.selectionClick();
+    final target = DateTime.now().add(offset);
+    setState(() {
+      _selectedDueDate = DateTime(target.year, target.month, target.day, hour, minute);
+      _selectedTime = TimeOfDay(hour: hour, minute: minute);
+    });
+  }
+
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -134,6 +144,7 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
 
   void _onSave() {
     if (_formKey.currentState?.validate() ?? false) {
+      HapticFeedback.mediumImpact();
       final combinedDateTime = DateTime(
         _selectedDueDate.year,
         _selectedDueDate.month,
@@ -172,7 +183,14 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.r28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.r32)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 30,
+            offset: Offset(0, -8),
+          ),
+        ],
       ),
       padding: EdgeInsets.fromLTRB(
         AppDimensions.p24,
@@ -190,30 +208,48 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
               // Bottom sheet handle bar
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
+                  width: 44,
+                  height: 5,
                   decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(2),
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(AppDimensions.rFull),
                   ),
                 ),
               ),
               const SizedBox(height: AppDimensions.p20),
 
-              // Title
+              // Title Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    isEditing ? AppStrings.editTask : AppStrings.newTask,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(AppDimensions.r12),
+                        ),
+                        child: Icon(
+                          isEditing ? Icons.edit_note_rounded : Icons.add_task_rounded,
+                          color: AppColors.primary,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: AppDimensions.p12),
+                      Text(
+                        isEditing ? AppStrings.editTask : AppStrings.newTask,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textPrimary,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                    ],
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 22),
+                    icon: const Icon(Icons.close_rounded, size: 22, color: AppColors.textSecondary),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -224,7 +260,7 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
               CustomTextField(
                 controller: _titleController,
                 label: AppStrings.taskTitle,
-                hint: 'e.g. Deliver Package #408',
+                hint: 'e.g. Deliver Package #408 or Client Pickup',
                 prefixIcon: Icons.title_rounded,
                 validator: (val) => Validators.validateRequired(val, 'Title'),
               ),
@@ -234,18 +270,70 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
               CustomTextField(
                 controller: _descController,
                 label: AppStrings.taskDescription,
-                hint: 'Add details, customer notes, or address...',
+                hint: 'Customer delivery notes, pickup location, or contacts...',
                 prefixIcon: Icons.notes_rounded,
                 maxLines: 3,
               ),
               const SizedBox(height: AppDimensions.p20),
+
+              // Quick Time Presets
+              const Text(
+                'Quick Due Presets',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppDimensions.p8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    ActionChip(
+                      label: const Text('In 2 Hours'),
+                      avatar: const Icon(Icons.flash_on_rounded, size: 14, color: AppColors.primary),
+                      onPressed: () {
+                        final now = DateTime.now().add(const Duration(hours: 2));
+                        _applyQuickPreset(const Duration(hours: 2), now.hour, now.minute);
+                      },
+                      backgroundColor: AppColors.background,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppDimensions.rFull),
+                        side: const BorderSide(color: AppColors.border),
+                      ),
+                    ),
+                    const SizedBox(width: AppDimensions.p8),
+                    ActionChip(
+                      label: const Text('Today 6 PM'),
+                      onPressed: () => _applyQuickPreset(Duration.zero, 18, 0),
+                      backgroundColor: AppColors.background,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppDimensions.rFull),
+                        side: const BorderSide(color: AppColors.border),
+                      ),
+                    ),
+                    const SizedBox(width: AppDimensions.p8),
+                    ActionChip(
+                      label: const Text('Tomorrow 10 AM'),
+                      onPressed: () => _applyQuickPreset(const Duration(days: 1), 10, 0),
+                      backgroundColor: AppColors.background,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppDimensions.rFull),
+                        side: const BorderSide(color: AppColors.border),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppDimensions.p16),
 
               // Due Date & Time Selectors
               const Text(
                 AppStrings.dueDate,
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -331,12 +419,12 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
               ),
               const SizedBox(height: AppDimensions.p20),
 
-              // Priority Selector
+              // Priority Selector Cards
               const Text(
                 AppStrings.priority,
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -350,50 +438,61 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
                         right: priority != TaskPriority.values.last ? 8.0 : 0,
                       ),
                       child: InkWell(
-                        onTap: () => setState(() => _selectedPriority = priority),
-                        borderRadius: BorderRadius.circular(AppDimensions.r12),
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          setState(() => _selectedPriority = priority);
+                        },
+                        borderRadius: BorderRadius.circular(AppDimensions.r16),
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          duration: const Duration(milliseconds: 180),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? priority.backgroundColor
                                 : AppColors.background,
-                            borderRadius: BorderRadius.circular(AppDimensions.r12),
+                            borderRadius: BorderRadius.circular(AppDimensions.r16),
                             border: Border.all(
                               color: isSelected
                                   ? priority.color
                                   : AppColors.border,
                               width: isSelected ? 1.8 : 1,
                             ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: priority.color.withValues(alpha: 0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ]
+                                : null,
                           ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: priority.color,
-                                    shape: BoxShape.circle,
-                                  ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                priority == TaskPriority.high
+                                    ? Icons.local_fire_department_rounded
+                                    : priority == TaskPriority.medium
+                                        ? Icons.bolt_rounded
+                                        : Icons.spa_rounded,
+                                color: priority.color,
+                                size: 20,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                priority.label,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? priority.color
+                                      : AppColors.textSecondary,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w800
+                                      : FontWeight.w500,
+                                  fontSize: 12.5,
                                 ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  priority.label,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? priority.color
-                                        : AppColors.textSecondary,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.w500,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -415,4 +514,3 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
     );
   }
 }
-
