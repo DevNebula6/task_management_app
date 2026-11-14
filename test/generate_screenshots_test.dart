@@ -12,6 +12,7 @@ import 'package:task_management_app/features/auth/presentation/pages/onboarding_
 import 'package:task_management_app/features/tasks/domain/entities/task_entity.dart';
 import 'package:task_management_app/features/tasks/presentation/bloc/task_state.dart';
 import 'package:task_management_app/features/tasks/presentation/widgets/filter_chips_bar.dart';
+import 'package:task_management_app/features/tasks/presentation/widgets/task_calendar_view.dart';
 import 'package:task_management_app/features/tasks/presentation/widgets/task_form_sheet.dart';
 import 'package:task_management_app/features/tasks/presentation/widgets/task_grouped_list.dart';
 import 'package:task_management_app/features/tasks/presentation/widgets/tasks_header.dart';
@@ -266,6 +267,100 @@ void main() {
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../assets/screenshots/04_create_task.png'),
+    );
+  });
+
+  testWidgets('Generate Calendar View screenshot', (tester) async {
+    tester.view.physicalSize = const Size(390 * 3, 844 * 3);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final searchController = TextEditingController();
+
+    await tester.pumpWidget(
+      buildPhoneFrame(
+        Scaffold(
+          backgroundColor: AppColors.background,
+          body: Column(
+            children: [
+              TasksHeader(
+                userName: 'Vineet',
+                searchController: searchController,
+                totalTasks: 6,
+                completedTasks: 2,
+                pendingTasks: 4,
+                onSearchChanged: (_) {},
+                onLogout: () {},
+              ),
+              Expanded(
+                child: TaskCalendarView(
+                  allTasks: sampleTasks,
+                  onToggleStatus: (_) {},
+                  onEdit: (_) {},
+                  onDelete: (_) {},
+                  onAddTaskForDate: (_) {},
+                ),
+              ),
+            ],
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: AppColors.primary,
+            elevation: 4,
+            shape: const CircleBorder(),
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [AppColors.primaryLight, AppColors.primary],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.add_rounded, color: Colors.white, size: 30),
+            ),
+          ),
+          bottomNavigationBar: BottomAppBar(
+            color: AppColors.surface,
+            surfaceTintColor: Colors.transparent,
+            elevation: 10,
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8,
+            height: 64,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.list_alt_rounded, color: AppColors.textMuted, size: 26),
+                  onPressed: () {},
+                ),
+                const SizedBox(width: 48),
+                IconButton(
+                  icon: const Icon(Icons.calendar_month_rounded, color: AppColors.primary, size: 26),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../assets/screenshots/05_calendar_view.png'),
     );
   });
 }

@@ -13,12 +13,14 @@ import '../../domain/entities/task_entity.dart';
 class TaskFormSheet extends StatefulWidget {
   final String userId;
   final TaskEntity? taskToEdit;
+  final DateTime? initialDate;
   final ValueChanged<TaskEntity> onSubmit;
 
   const TaskFormSheet({
     super.key,
     required this.userId,
     this.taskToEdit,
+    this.initialDate,
     required this.onSubmit,
   });
 
@@ -26,6 +28,7 @@ class TaskFormSheet extends StatefulWidget {
     required BuildContext context,
     required String userId,
     TaskEntity? taskToEdit,
+    DateTime? initialDate,
     required ValueChanged<TaskEntity> onSubmit,
   }) {
     return showModalBottomSheet(
@@ -35,6 +38,7 @@ class TaskFormSheet extends StatefulWidget {
       builder: (_) => TaskFormSheet(
         userId: userId,
         taskToEdit: taskToEdit,
+        initialDate: initialDate,
         onSubmit: onSubmit,
       ),
     );
@@ -60,7 +64,7 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
     final task = widget.taskToEdit;
     _titleController = TextEditingController(text: task?.title ?? '');
     _descController = TextEditingController(text: task?.description ?? '');
-    _selectedDueDate = task?.dueDate ?? DateTime.now();
+    _selectedDueDate = task?.dueDate ?? widget.initialDate ?? DateTime.now();
     _selectedTime = task != null
         ? TimeOfDay(hour: task.dueDate.hour, minute: task.dueDate.minute)
         : TimeOfDay.now();

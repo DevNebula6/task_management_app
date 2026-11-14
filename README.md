@@ -5,7 +5,7 @@
 [![Architecture](https://img.shields.io/badge/Architecture-Feature--First%20Clean%20Arch-success)](https://blog.cleancoder.com)
 [![State Management](https://img.shields.io/badge/State-flutter__bloc%209.1.1-blueviolet)](https://bloclibrary.dev)
 [![Database](https://img.shields.io/badge/Backend-Cloud%20Firestore%20%2B%20Hive-FFA000?logo=firebase)](https://firebase.google.com)
-[![Tests](https://img.shields.io/badge/Tests-10%2F10%20Passed-brightgreen)](https://github.com)
+[![Tests](https://img.shields.io/badge/Tests-12%2F12%20Passed-brightgreen)](https://github.com)
 [![Code Style](https://img.shields.io/badge/Code%20Style-flutter__lints%200%20warnings-informational)](https://pub.dev/packages/flutter_lints)
 
 > Built for the **WhatBytes Flutter Developer Intern Assignment**.  
@@ -53,9 +53,13 @@ Every requirement defined in the WhatBytes assignment specification (`Gmail - Fl
 | :---: | :---: |
 | <img src="assets/screenshots/01_onboarding.png" width="320" alt="Onboarding Screen"/> | <img src="assets/screenshots/02_login.png" width="320" alt="Login Screen"/> |
 
-| 3. Dynamic Task Dashboard | 4. Create Task Bottom Sheet |
+| 3. Dynamic Task Dashboard | 4. Interactive Calendar View |
 | :---: | :---: |
-| <img src="assets/screenshots/03_dashboard.png" width="320" alt="Dashboard Screen"/> | <img src="assets/screenshots/04_create_task.png" width="320" alt="Task Creation Sheet"/> |
+| <img src="assets/screenshots/03_dashboard.png" width="320" alt="Dashboard Screen"/> | <img src="assets/screenshots/05_calendar_view.png" width="320" alt="Calendar View Screen"/> |
+
+| 5. Create Task Bottom Sheet |
+| :---: |
+| <img src="assets/screenshots/04_create_task.png" width="320" alt="Task Creation Sheet"/> |
 
 ---
 
@@ -141,6 +145,35 @@ The user interface follows the reference mockups attached in the assignment spec
 - **Micro-Interactions & Slidable Tiles:** Spring scale animation and haptic feedback on task completion checkboxes, plus smooth swipe-to-reveal quick actions (`flutter_slidable`).
 - **Smart Quick-Presets in Creation Sheet:** One-tap presets (`+1 Hour`, `This Afternoon`, `Tomorrow Morning`) alongside date & time pickers for rapid gig dispatching.
 - **Docked FAB & Curved Bottom Bar:** Central purple floating `+` button docked with `CircularNotchedRectangle`.
+
+### 4. Interactive Calendar View
+```text
++------------------------------------------+
+|  Good morning • Vineet             [->]  |
+|  Today, 14 Nov                     98%   |
+|  [=========== Shift Progress ===========]|
+|  [ 🔍 Search tasks...                  ] |
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+|  November 2026   [Today]         (<) (>) |
+|  [Mon] [Tue] [Wed] [Thu*] [Fri] [Sat]    | (Horizontal Date Carousel)
+|   11    12    13    14     15    16      |
+|   •           •     ••            •      | (Task Priority Micro-Dots)
+|                                          |
+|  Thursday, 14 November      [1 / 2 Done] |
+|  +-------------------------------------+ |
+|  | ( ) Schedule dentist appointment    | |
+|  |     10:00 AM • Routine checkup [LOW]| |
+|  +-------------------------------------+ |
+|  | (✓) Prepare team meeting   [MEDIUM] | |
+|  +-------------------------------------+ |
+|                                          |
+|      (List)          (+)        (📅*)    | (Docked Center FAB)
++------------------------------------------+
+```
+- **Month & Year Navigation:** Month skipping with `<` and `>` controls and a 1-tap `Today` quick reset.
+- **Horizontal Date Timeline Strip:** Auto-centering scrollable day selector displaying day abbreviations, date numerals, and priority micro-dots.
+- **Dynamic Day Breakdown:** Live stats pill showing completion metrics for the chosen date.
+- **1-Tap Date Scheduling:** Pre-fills the selected calendar date when adding tasks via the docked FAB or day empty state.
 
 ---
 
@@ -353,8 +386,9 @@ flutter test
 - **Validators Tests:** Verifies email format validation, minimum 6-character password enforcement, and empty field guards.
 - **DateFormatter Tests:** Verifies dynamic calculation of **Today**, **Tomorrow**, **This week**, and **Later** date brackets.
 - **Auth Layer Tests:** Verifies `UserEntity` mapping and `UserModel` JSON serialization.
-- **Task Layer Tests:** Verifies `TaskModel` conversions, `TaskPriority` string parsing, and strict **earliest-to-latest due date sorting**.
+- **Task Layer Tests:** Verifies `TaskModel` conversions, `TaskPriority` string parsing, strict **earliest-to-latest due date sorting**, and optimistic state updates.
 - **Widget Tests:** Verifies `TaskTile` component rendering, priority badge styling, and circular checkbox toggle callbacks.
+- **Calendar Widget Tests:** Verifies month navigation, date timeline selection, priority micro-dot indicators, and dynamic day-specific task filtering.
 
 ---
 

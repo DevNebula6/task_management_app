@@ -12,6 +12,7 @@ import '../bloc/task_bloc.dart';
 import '../bloc/task_event.dart';
 import '../bloc/task_state.dart';
 import '../widgets/filter_chips_bar.dart';
+import '../widgets/task_calendar_view.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/task_grouped_list.dart';
 import '../widgets/tasks_header.dart';
@@ -27,6 +28,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
+  int _selectedTab = 0; // 0: Tasks List, 1: Calendar View
 
   @override
   void initState() {
@@ -44,10 +46,11 @@ class _HomePageState extends State<HomePage> {
     context.read<TaskBloc>().add(TaskFilterChanged(searchQuery: query));
   }
 
-  void _openAddTaskSheet() {
+  void _openAddTaskSheet({DateTime? initialDate}) {
     TaskFormSheet.show(
       context: context,
       userId: widget.user.id,
+      initialDate: initialDate,
       onSubmit: (newTask) {
         context.read<TaskBloc>().add(TaskCreated(newTask));
         AppSnackBar.showSuccess(context, 'Task created successfully');
@@ -148,38 +151,42 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: AppDimensions.p16),
 
-              // 2. Filter Bar
-              if (state is TaskLoaded)
-                FilterChipsBar(
-                  selectedStatus: state.statusFilter,
-                  selectedPriority: state.priorityFilter,
-                  allCount: totalTasks,
-                  incompleteCount: pendingTasks,
-                  completedCount: completedTasks,
-                  onStatusSelected: (status) {
-                    context.read<TaskBloc>().add(
-                          TaskFilterChanged(statusFilter: status),
-                        );
-                  },
-                  onPrioritySelected: (priority) {
-                    context.read<TaskBloc>().add(
-                          TaskFilterChanged(priorityFilter: priority),
-                        );
-                  },
+              // 2. Body based on selected tab (List or Calendar)
+              if (_selectedTab == 0) ...[
+                if (state is TaskLoaded)
+                  FilterChipsBar(
+                    selectedStatus: state.statusFilter,
+                    selectedPriority: state.priorityFilter,
+                    allCount: totalTasks,
+                    incompleteCount: pendingTasks,
+                    completedCount: completedTasks,
+                    onStatusSelected: (status) {
+                      context.read<TaskBloc>().add(
+                            TaskFilterChanged(statusFilter: status),
+                          );
+                    },
+                    onPrioritySelected: (priority) {
+                      context.read<TaskBloc>().add(
+                            TaskFilterChanged(priorityFilter: priority),
+                          );
+                    },
+                  ),
+                const SizedBox(height: AppDimensions.p8),
+                Expanded(
+                  child: _buildTaskListBody(state),
                 ),
-              const SizedBox(height: AppDimensions.p8),
-
-              // 3. Task Grouped List Body
-              Expanded(
-                child: _buildTaskListBody(state),
-              ),
+              ] else ...[
+                Expanded(
+                  child: _buildCalendarBody(state),
+                ),
+              ],
             ],
           );
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: _openAddTaskSheet,
+        onPressed: () => _openAddTaskSheet(),
         backgroundColor: AppColors.primary,
         elevation: 4,
         shape: const CircleBorder(),
@@ -213,17 +220,23 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: const Icon(Icons.list_alt_rounded, color: AppColors.primary),
-              onPressed: () {},
-              tooltip: 'Tasks',
+              icon: Icon(
+                Icons.list_alt_rounded,
+                color: _selectedTab == 0 ? AppColors.primary : AppColors.textMuted,
+                size: 26,
+              ),
+              onPressed: () => setState(() => _selectedTab = 0),
+              tooltip: 'Tasks List',
             ),
             const SizedBox(width: 48), // Gap for docked FAB
             IconButton(
-              icon: const Icon(Icons.calendar_month_outlined, color: AppColors.textMuted),
-              onPressed: () {
-                AppSnackBar.showInfo(context, 'Calendar view coming in next update');
-              },
-              tooltip: 'Calendar',
+              icon: Icon(
+                Icons.calendar_month_rounded,
+                color: _selectedTab == 1 ? AppColors.primary : AppColors.textMuted,
+                size: 26,
+              ),
+              onPressed: () => setState(() => _selectedTab = 1),
+              tooltip: 'Calendar View',
             ),
           ],
         ),
@@ -281,6 +294,38 @@ class _HomePageState extends State<HomePage> {
         onEdit: _openEditTaskSheet,
         onDelete: _deleteTask,
       ),
+    );
+  }
+
+  Widget _buildCalendarBody(TaskState state) {
+    if (state is TaskLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
+    }
+
+    final List<TaskEntity> allTasks = state is TaskLoaded
+        ? state.allTasks
+        : state is TaskOperationFailure
+            ? state.fallbackTasks
+            : [];
+
+    return TaskCalendarView(
+      allTasks: allTasks,
+      onToggleStatus: (task) {
+        context.read<TaskBloc>().add(
+              TaskStatusToggled(
+                taskId: task.id,
+                userId: widget.user.id,
+                isCompleted: !task.isCompleted,
+              ),
+            );
+      },
+      onEdit: _openEditTaskSheet,
+      onDelete: _deleteTask,
+      onAddTaskForDate: (date) {
+        _openAddTaskSheet(initialDate: date);
+      },
     );
   }
 }
