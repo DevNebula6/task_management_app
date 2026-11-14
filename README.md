@@ -24,7 +24,6 @@
 8. [Project Folder Structure](#-project-folder-structure)
 9. [Setup & Running Instructions](#-setup--running-instructions)
 10. [Test Suite & Quality Verification](#-test-suite--quality-verification)
-11. [Role Requirements Confirmation](#-role-requirements-confirmation)
 
 ---
 
@@ -339,14 +338,6 @@ flutter test
 - **Auth Layer Tests:** Verifies `UserEntity` mapping and `UserModel` JSON serialization.
 - **Task Layer Tests:** Verifies `TaskModel` conversions, `TaskPriority` string parsing, and strict **earliest-to-latest due date sorting**.
 - **Widget Tests:** Verifies `TaskTile` component rendering, priority badge styling, and circular checkbox toggle callbacks.
-
----
-
-## 💼 Role Requirements Confirmation
-
-As requested in the WhatBytes assignment brief:
-- **Work Schedule Availability:** Available from **11:00 AM to 8:00 PM (IST)**, **Monday to Saturday (6 days a week)**.
-- **Remote Work Setup:** Dedicated quiet workspace equipped with high-speed fiber internet for seamless team communication and daily stand-ups.
 
 ---
 
