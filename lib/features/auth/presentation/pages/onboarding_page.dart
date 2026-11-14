@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -27,10 +28,7 @@ class OnboardingPage extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primaryLight,
-                  ],
+                  colors: [AppColors.primary, AppColors.primaryLight],
                 ),
               ),
             ),
@@ -39,7 +37,9 @@ class OnboardingPage extends StatelessWidget {
           // Main Card & Content
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.p24),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.p24,
+              ),
               child: Column(
                 children: [
                   const Spacer(flex: 1),
@@ -78,10 +78,14 @@ class OnboardingPage extends StatelessWidget {
                             height: 60,
                             decoration: BoxDecoration(
                               color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(AppDimensions.r16),
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.r16,
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.35),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.35,
+                                  ),
                                   blurRadius: 12,
                                   offset: const Offset(0, 6),
                                 ),
@@ -106,11 +110,11 @@ class OnboardingPage extends StatelessWidget {
                     child: Text(
                       AppStrings.onboardingTitle,
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
-                            letterSpacing: -0.5,
-                          ),
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppDimensions.p12),
@@ -119,10 +123,10 @@ class OnboardingPage extends StatelessWidget {
                     child: Text(
                       AppStrings.onboardingSubtitle,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.textSecondary,
-                            height: 1.5,
-                            fontSize: 15,
-                          ),
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
 
@@ -162,17 +166,24 @@ class OnboardingPage extends StatelessWidget {
                             onGetStarted!();
                           } else {
                             Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const LoginPage()),
+                              MaterialPageRoute(
+                                builder: (_) => const LoginPage(),
+                              ),
                             );
                           }
                         },
-                        borderRadius: BorderRadius.circular(AppDimensions.rFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.rFull,
+                        ),
                         child: Container(
                           width: 64,
                           height: 64,
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [AppColors.primaryLight, AppColors.primary],
+                              colors: [
+                                AppColors.primaryLight,
+                                AppColors.primary,
+                              ],
                             ),
                             shape: BoxShape.circle,
                             boxShadow: [
@@ -235,4 +246,3 @@ class _TopCurvedClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
-
