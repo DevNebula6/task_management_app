@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -38,14 +39,14 @@ class _SignupPageState extends State<SignupPage> {
   void _onSignupPressed() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-            AuthRegisterSubmitted(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-              displayName: _nameController.text.trim().isNotEmpty
-                  ? _nameController.text.trim()
-                  : null,
-            ),
-          );
+        AuthRegisterSubmitted(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          displayName: _nameController.text.trim().isNotEmpty
+              ? _nameController.text.trim()
+              : null,
+        ),
+      );
     }
   }
 
@@ -76,15 +77,19 @@ class _SignupPageState extends State<SignupPage> {
           return SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.p24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.p24,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppStrings.loginTitle, // "Welcome back!" or "Create Account"
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        AppStrings
+                            .loginTitle, // "Welcome back!" or "Create Account"
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               letterSpacing: -0.5,
@@ -94,9 +99,9 @@ class _SignupPageState extends State<SignupPage> {
                       Text(
                         AppStrings.signupSubtitle,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                       const SizedBox(height: AppDimensions.p28),
 
@@ -142,10 +147,11 @@ class _SignupPageState extends State<SignupPage> {
                         prefixIcon: Icons.lock_outline,
                         isPassword: true,
                         textInputAction: TextInputAction.done,
-                        validator: (value) => Validators.validateConfirmPassword(
-                          value,
-                          _passwordController.text,
-                        ),
+                        validator: (value) =>
+                            Validators.validateConfirmPassword(
+                              value,
+                              _passwordController.text,
+                            ),
                         onFieldSubmitted: (_) => _onSignupPressed(),
                       ),
                       const SizedBox(height: AppDimensions.p28),
@@ -198,4 +204,3 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 }
-
