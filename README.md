@@ -15,7 +15,7 @@
 
 ## 📋 Table of Contents
 1. [Overview & Requirements Traceability](#-overview--requirements-traceability)
-2. [UI Architecture & Screen Layouts](#-ui-architecture--screen-layouts)
+2. [UI Architecture & App Screenshots](#-ui-architecture--app-screenshots)
 3. [System Architecture & Clean Principles](#-system-architecture--clean-principles)
 4. [Data Flow & State Lifecycle Diagram](#-data-flow--state-lifecycle-diagram)
 5. [Dual-Storage Sync: Cloud Firestore + Hive](#-dual-storage-sync-cloud-firestore--hive)
@@ -45,7 +45,21 @@ Every requirement defined in the WhatBytes assignment specification (`Gmail - Fl
 
 ---
 
-## 🎨 UI Architecture & Screen Layouts
+## 🎨 UI Architecture & App Screenshots
+
+### 📱 Visual Screenshots Gallery
+
+| 1. Onboarding Screen | 2. Sign In & 1-Tap Demo Mode |
+| :---: | :---: |
+| <img src="assets/screenshots/01_onboarding.png" width="320" alt="Onboarding Screen"/> | <img src="assets/screenshots/02_login.png" width="320" alt="Login Screen"/> |
+
+| 3. Dynamic Task Dashboard | 4. Create Task Bottom Sheet |
+| :---: | :---: |
+| <img src="assets/screenshots/03_dashboard.png" width="320" alt="Dashboard Screen"/> | <img src="assets/screenshots/04_create_task.png" width="320" alt="Task Creation Sheet"/> |
+
+---
+
+### 📐 Screen Layout Blueprints
 
 The user interface follows the reference mockups attached in the assignment specification:
 
@@ -66,7 +80,7 @@ The user interface follows the reference mockups attached in the assignment spec
 |  [ == • ]                        ( -> )  |
 +------------------------------------------+
 ```
-- **Top Curved Banner:** Custom bezier curve clipper with indigo gradient (`#5B50E5` to `#7F76F0`).
+- **Top Curved Banner:** Custom bezier curve clipper with indigo gradient (`#4338CA` to `#6366F1`).
 - **Hero Checkmark Card:** Elevated card with rounded corners and glowing indigo shadow.
 - **Floating Action Button:** Circular bottom-right button with forward arrow transitioning to auth.
 
@@ -93,7 +107,7 @@ The user interface follows the reference mockups attached in the assignment spec
 - **1-Tap Demo Login:** Instantly populates credentials (`demo@whatbytes.com`) and signs into local offline evaluation mode.
 - **Social Decor:** Circular bordered badges matching `Reference1.png`.
 
-### 3. Task Dashboard (`Reference2.png`) & Impeccable UI Craft
+### 3. Task Dashboard (`Reference2.png`) & Enhanced UI Craft
 ```text
 +------------------------------------------+
 |  Good morning • Vineet             [->]  |
