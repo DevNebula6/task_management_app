@@ -171,40 +171,47 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
               createdAt: DateTime.now(),
             );
 
-      widget.onSubmit(task);
       Navigator.of(context).pop();
+      widget.onSubmit(task);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final mediaQuery = MediaQuery.of(context);
+    final bottomInset = mediaQuery.viewInsets.bottom;
+    final maxHeight = mediaQuery.size.height * 0.88;
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.r32)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 30,
-            offset: Offset(0, -8),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.fromLTRB(
-        AppDimensions.p24,
-        AppDimensions.p16,
-        AppDimensions.p24,
-        AppDimensions.p24 + bottomInset,
-      ),
-      child: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: Container(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.r32)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 30,
+              offset: Offset(0, -8),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+              AppDimensions.p24,
+              AppDimensions.p16,
+              AppDimensions.p24,
+              AppDimensions.p24,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // Bottom sheet handle bar
               Center(
                 child: Container(
@@ -511,6 +518,8 @@ class _TaskFormSheetState extends State<TaskFormSheet> {
           ),
         ),
       ),
+    ),
+    ),
     );
   }
 }

@@ -11,52 +11,71 @@ class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource remoteDataSource;
   final TaskLocalDataSource localDataSource;
 
+  final StreamController<List<TaskEntity>> _tasksController =
+      StreamController<List<TaskEntity>>.broadcast();
+  StreamSubscription? _remoteSub;
+  StreamSubscription? _localSub;
+
   TaskRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
   });
 
+  void _notify(String userId) {
+    if (!_tasksController.isClosed) {
+      final cached = localDataSource.getCachedTasks(userId: userId);
+      _tasksController.add(cached);
+    }
+  }
+
   @override
   Stream<List<TaskEntity>> getTasksStream(String userId) {
-    late StreamController<List<TaskEntity>> controller;
-    StreamSubscription? remoteSub;
+    // 1. Initial cached tasks or seed samples
+    var cached = localDataSource.getCachedTasks(userId: userId);
+    if (cached.isEmpty) {
+      final samples = _createSampleTasks(userId);
+      localDataSource.cacheTasks(samples).then((_) {
+        _notify(userId);
+      });
+    }
 
-    controller = StreamController<List<TaskEntity>>.broadcast(
-      onListen: () async {
-        // Emit cached tasks right away
-        var cached = localDataSource.getCachedTasks(userId: userId);
-        if (cached.isEmpty) {
-          final samples = _createSampleTasks(userId);
-          await localDataSource.cacheTasks(samples);
-          cached = localDataSource.getCachedTasks(userId: userId);
-        }
-        controller.add(cached);
+    // 2. Watch local Hive box
+    _localSub?.cancel();
+    _localSub = localDataSource.watchTasks(userId: userId).listen((tasks) {
+      if (!_tasksController.isClosed) {
+        _tasksController.add(tasks);
+      }
+    });
 
-        // Listen to remote changes
-        try {
-          remoteSub = remoteDataSource.getTasksStream(userId).listen(
-            (remoteTasks) async {
-              await localDataSource.cacheTasks(remoteTasks);
-              final updated = localDataSource.getCachedTasks(userId: userId);
-              controller.add(updated);
-            },
-            onError: (err) {
-              // Remote stream failed (e.g. offline or rules). Keep emitting local
-              final fallback = localDataSource.getCachedTasks(userId: userId);
-              controller.add(fallback);
-            },
-          );
-        } catch (_) {
-          final fallback = localDataSource.getCachedTasks(userId: userId);
-          controller.add(fallback);
-        }
-      },
-      onCancel: () {
-        remoteSub?.cancel();
-      },
-    );
+    // 3. Listen to remote changes
+    _remoteSub?.cancel();
+    try {
+      _remoteSub = remoteDataSource.getTasksStream(userId).listen(
+        (remoteTasks) async {
+          if (remoteTasks.isNotEmpty) {
+            await localDataSource.cacheTasks(remoteTasks);
+          }
+          _notify(userId);
+        },
+        onError: (_) {
+          _notify(userId);
+        },
+      );
+    } catch (_) {
+      _notify(userId);
+    }
 
-    return controller.stream;
+    return Stream<List<TaskEntity>>.multi((multiController) {
+      final initial = localDataSource.getCachedTasks(userId: userId);
+      if (initial.isNotEmpty) {
+        multiController.add(initial);
+      }
+      final sub = _tasksController.stream.listen(
+        multiController.add,
+        onError: multiController.addError,
+      );
+      multiController.onCancel = () => sub.cancel();
+    });
   }
 
   @override
@@ -82,6 +101,7 @@ class TaskRepositoryImpl implements TaskRepository {
     try {
       // 1. Write to local cache first (instant optimistic response)
       await localDataSource.cacheTask(model);
+      _notify(task.userId);
 
       // 2. Sync to remote
       try {
@@ -100,6 +120,7 @@ class TaskRepositoryImpl implements TaskRepository {
     final model = TaskModel.fromEntity(task);
     try {
       await localDataSource.cacheTask(model);
+      _notify(task.userId);
       try {
         await remoteDataSource.updateTask(model);
       } catch (_) {
@@ -115,6 +136,7 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<Either<Failure, void>> deleteTask(String taskId, String userId) async {
     try {
       await localDataSource.removeTask(taskId);
+      _notify(userId);
       try {
         await remoteDataSource.deleteTask(taskId, userId);
       } catch (_) {
@@ -134,6 +156,7 @@ class TaskRepositoryImpl implements TaskRepository {
   ) async {
     try {
       await localDataSource.toggleTaskStatus(taskId, isCompleted);
+      _notify(userId);
       try {
         await remoteDataSource.toggleTaskStatus(taskId, userId, isCompleted);
       } catch (_) {

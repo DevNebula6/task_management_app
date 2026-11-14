@@ -79,9 +79,28 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     TaskCreated event,
     Emitter<TaskState> emit,
   ) async {
+    if (state is TaskLoaded) {
+      final current = state as TaskLoaded;
+      final updatedAll = List<TaskEntity>.from(current.allTasks)..add(event.task);
+      updatedAll.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+
+      emit(current.copyWith(
+        allTasks: updatedAll,
+        filteredTasks: _applyFilters(
+          updatedAll,
+          current.statusFilter,
+          current.priorityFilter,
+          current.searchQuery,
+        ),
+      ));
+    }
+
     final result = await createTaskUseCase(event.task);
     result.fold(
-      (failure) => emit(TaskOperationFailure(failure.message)),
+      (failure) {
+        final currentTasks = state is TaskLoaded ? (state as TaskLoaded).allTasks : <TaskEntity>[];
+        emit(TaskOperationFailure(failure.message, fallbackTasks: currentTasks));
+      },
       (_) {},
     );
   }
@@ -90,9 +109,30 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     TaskUpdated event,
     Emitter<TaskState> emit,
   ) async {
+    if (state is TaskLoaded) {
+      final current = state as TaskLoaded;
+      final updatedAll = current.allTasks.map((t) {
+        return t.id == event.task.id ? event.task : t;
+      }).toList();
+      updatedAll.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+
+      emit(current.copyWith(
+        allTasks: updatedAll,
+        filteredTasks: _applyFilters(
+          updatedAll,
+          current.statusFilter,
+          current.priorityFilter,
+          current.searchQuery,
+        ),
+      ));
+    }
+
     final result = await updateTaskUseCase(event.task);
     result.fold(
-      (failure) => emit(TaskOperationFailure(failure.message)),
+      (failure) {
+        final currentTasks = state is TaskLoaded ? (state as TaskLoaded).allTasks : <TaskEntity>[];
+        emit(TaskOperationFailure(failure.message, fallbackTasks: currentTasks));
+      },
       (_) {},
     );
   }
@@ -101,12 +141,31 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     TaskDeleted event,
     Emitter<TaskState> emit,
   ) async {
+    if (state is TaskLoaded) {
+      final current = state as TaskLoaded;
+      final updatedAll =
+          current.allTasks.where((t) => t.id != event.taskId).toList();
+
+      emit(current.copyWith(
+        allTasks: updatedAll,
+        filteredTasks: _applyFilters(
+          updatedAll,
+          current.statusFilter,
+          current.priorityFilter,
+          current.searchQuery,
+        ),
+      ));
+    }
+
     final result = await deleteTaskUseCase(
       taskId: event.taskId,
       userId: event.userId,
     );
     result.fold(
-      (failure) => emit(TaskOperationFailure(failure.message)),
+      (failure) {
+        final currentTasks = state is TaskLoaded ? (state as TaskLoaded).allTasks : <TaskEntity>[];
+        emit(TaskOperationFailure(failure.message, fallbackTasks: currentTasks));
+      },
       (_) {},
     );
   }
@@ -115,13 +174,59 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     TaskStatusToggled event,
     Emitter<TaskState> emit,
   ) async {
+    // 1. Instant Optimistic UI Update (0ms latency)
+    if (state is TaskLoaded) {
+      final current = state as TaskLoaded;
+      final updatedAll = current.allTasks.map((t) {
+        if (t.id == event.taskId) {
+          return t.copyWith(isCompleted: event.isCompleted);
+        }
+        return t;
+      }).toList();
+
+      final filtered = _applyFilters(
+        updatedAll,
+        current.statusFilter,
+        current.priorityFilter,
+        current.searchQuery,
+      );
+
+      emit(current.copyWith(
+        allTasks: updatedAll,
+        filteredTasks: filtered,
+      ));
+    }
+
+    // 2. Persist to storage
     final result = await toggleTaskStatusUseCase(
       taskId: event.taskId,
       userId: event.userId,
       isCompleted: event.isCompleted,
     );
     result.fold(
-      (failure) => emit(TaskOperationFailure(failure.message)),
+      (failure) {
+        // If failed, revert optimistic toggle
+        if (state is TaskLoaded) {
+          final current = state as TaskLoaded;
+          final revertedAll = current.allTasks.map((t) {
+            if (t.id == event.taskId) {
+              return t.copyWith(isCompleted: !event.isCompleted);
+            }
+            return t;
+          }).toList();
+          emit(current.copyWith(
+            allTasks: revertedAll,
+            filteredTasks: _applyFilters(
+              revertedAll,
+              current.statusFilter,
+              current.priorityFilter,
+              current.searchQuery,
+            ),
+          ));
+        }
+        final currentTasks = state is TaskLoaded ? (state as TaskLoaded).allTasks : <TaskEntity>[];
+        emit(TaskOperationFailure(failure.message, fallbackTasks: currentTasks));
+      },
       (_) {},
     );
   }

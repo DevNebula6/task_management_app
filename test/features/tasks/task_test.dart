@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:task_management_app/features/tasks/data/models/task_model.dart';
 import 'package:task_management_app/features/tasks/domain/entities/task_entity.dart';
+import 'package:task_management_app/features/tasks/presentation/bloc/task_state.dart';
 
 void main() {
   group('Task Layer Unit Tests', () {
@@ -53,6 +54,22 @@ void main() {
 
       final list = [t1, t2, t3]..sort((a, b) => a.dueDate.compareTo(b.dueDate));
       expect(list.map((e) => e.id).toList(), ['3', '2', '1']);
+    });
+
+    test('TaskLoaded copyWith correctly updates completed status', () {
+      final loaded = TaskLoaded(
+        allTasks: [task],
+        filteredTasks: [task],
+      );
+
+      final updated = loaded.copyWith(
+        allTasks: [task.copyWith(isCompleted: true)],
+        filteredTasks: [task.copyWith(isCompleted: true)],
+      );
+
+      expect(updated.allTasks.first.isCompleted, isTrue);
+      expect(updated.completedCount, 1);
+      expect(updated.pendingCount, 0);
     });
   });
 }

@@ -108,6 +108,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      resizeToAvoidBottomInset: false,
       body: BlocConsumer<TaskBloc, TaskState>(
         listener: (context, state) {
           if (state is TaskOperationFailure) {
@@ -115,13 +116,21 @@ class _HomePageState extends State<HomePage> {
           }
         },
         builder: (context, state) {
-          final int totalTasks = state is TaskLoaded ? state.allTasks.length : 0;
+          final int totalTasks = state is TaskLoaded
+              ? state.allTasks.length
+              : state is TaskOperationFailure
+                  ? state.fallbackTasks.length
+                  : 0;
           final int completedTasks = state is TaskLoaded
               ? state.allTasks.where((t) => t.isCompleted).length
-              : 0;
+              : state is TaskOperationFailure
+                  ? state.fallbackTasks.where((t) => t.isCompleted).length
+                  : 0;
           final int pendingTasks = state is TaskLoaded
               ? state.allTasks.where((t) => !t.isCompleted).length
-              : 0;
+              : state is TaskOperationFailure
+                  ? state.fallbackTasks.where((t) => !t.isCompleted).length
+                  : 0;
 
           return Column(
             children: [
@@ -229,38 +238,50 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    final List<TaskEntity> tasksToDisplay;
+    final TaskStatusFilter statusFilter;
+    final TaskPriorityFilter priorityFilter;
+
     if (state is TaskLoaded) {
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        child: TaskGroupedList(
-          key: ValueKey('${state.statusFilter}_${state.priorityFilter}_${state.filteredTasks.length}'),
-          tasks: state.filteredTasks,
-          onResetFilters: () {
-            _searchController.clear();
-            context.read<TaskBloc>().add(
-                  const TaskFilterChanged(
-                    statusFilter: TaskStatusFilter.all,
-                    priorityFilter: TaskPriorityFilter.all,
-                    searchQuery: '',
-                  ),
-                );
-          },
-          onToggleStatus: (task) {
-            context.read<TaskBloc>().add(
-                  TaskStatusToggled(
-                    taskId: task.id,
-                    userId: widget.user.id,
-                    isCompleted: !task.isCompleted,
-                  ),
-                );
-          },
-          onEdit: _openEditTaskSheet,
-          onDelete: _deleteTask,
-        ),
-      );
+      tasksToDisplay = state.filteredTasks;
+      statusFilter = state.statusFilter;
+      priorityFilter = state.priorityFilter;
+    } else if (state is TaskOperationFailure && state.fallbackTasks.isNotEmpty) {
+      tasksToDisplay = state.fallbackTasks;
+      statusFilter = TaskStatusFilter.all;
+      priorityFilter = TaskPriorityFilter.all;
+    } else {
+      return const SizedBox.shrink();
     }
 
-    return const SizedBox.shrink();
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      child: TaskGroupedList(
+        key: ValueKey('${statusFilter}_${priorityFilter}_${tasksToDisplay.length}'),
+        tasks: tasksToDisplay,
+        onResetFilters: () {
+          _searchController.clear();
+          context.read<TaskBloc>().add(
+                const TaskFilterChanged(
+                  statusFilter: TaskStatusFilter.all,
+                  priorityFilter: TaskPriorityFilter.all,
+                  searchQuery: '',
+                ),
+              );
+        },
+        onToggleStatus: (task) {
+          context.read<TaskBloc>().add(
+                TaskStatusToggled(
+                  taskId: task.id,
+                  userId: widget.user.id,
+                  isCompleted: !task.isCompleted,
+                ),
+              );
+        },
+        onEdit: _openEditTaskSheet,
+        onDelete: _deleteTask,
+      ),
+    );
   }
 }
 

@@ -65,7 +65,9 @@ class _SignupPageState extends State<SignupPage> {
             AppSnackBar.showError(context, state.message);
           } else if (state is Authenticated) {
             // Dismiss signup page if pushed
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
           }
         },
         builder: (context, state) {

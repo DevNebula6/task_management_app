@@ -86,10 +86,11 @@ class TaskLoaded extends TaskState {
 
 class TaskOperationFailure extends TaskState {
   final String message;
+  final List<TaskEntity> fallbackTasks;
 
-  const TaskOperationFailure(this.message);
+  const TaskOperationFailure(this.message, {this.fallbackTasks = const []});
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, fallbackTasks];
 }
 

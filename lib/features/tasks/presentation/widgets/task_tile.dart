@@ -130,49 +130,55 @@ class TaskTile extends StatelessWidget {
                 // Custom Interactive Circular Checkbox with Spring Animation
                 GestureDetector(
                   key: Key('task_checkbox_${task.id}'),
+                  behavior: HitTestBehavior.opaque,
                   onTap: () {
                     HapticFeedback.mediumImpact();
                     onToggleStatus(!task.isCompleted);
                   },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutBack,
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      gradient: task.isCompleted
-                          ? const LinearGradient(
-                              colors: [
-                                AppColors.primaryLight,
-                                AppColors.primary,
-                              ],
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    alignment: Alignment.center,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutBack,
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        gradient: task.isCompleted
+                            ? const LinearGradient(
+                                colors: [
+                                  AppColors.primaryLight,
+                                  AppColors.primary,
+                                ],
+                              )
+                            : null,
+                        color: task.isCompleted ? null : Colors.transparent,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: task.isCompleted
+                              ? AppColors.primary
+                              : AppColors.border,
+                          width: 2,
+                        ),
+                        boxShadow: task.isCompleted
+                            ? [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(alpha: 0.35),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: task.isCompleted
+                          ? const Icon(
+                              Icons.check_rounded,
+                              size: 17,
+                              color: Colors.white,
                             )
                           : null,
-                      color: task.isCompleted ? null : Colors.transparent,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: task.isCompleted
-                            ? AppColors.primary
-                            : AppColors.border,
-                        width: 2,
-                      ),
-                      boxShadow: task.isCompleted
-                          ? [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.35),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
                     ),
-                    child: task.isCompleted
-                        ? const Icon(
-                            Icons.check_rounded,
-                            size: 17,
-                            color: Colors.white,
-                          )
-                        : null,
                   ),
                 ),
                 const SizedBox(width: AppDimensions.p16),
