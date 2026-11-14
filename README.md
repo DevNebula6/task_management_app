@@ -7,6 +7,7 @@
 [![Database](https://img.shields.io/badge/Backend-Cloud%20Firestore%20%2B%20Hive-FFA000?logo=firebase)](https://firebase.google.com)
 [![Tests](https://img.shields.io/badge/Tests-12%2F12%20Passed-brightgreen)](https://github.com)
 [![Code Style](https://img.shields.io/badge/Code%20Style-flutter__lints%200%20warnings-informational)](https://pub.dev/packages/flutter_lints)
+[![Release APK](https://img.shields.io/badge/Release_APK-Download_%26_Test-blue?logo=android&logoColor=white)](apk/app-release.apk)
 
 > Built for the **WhatBytes Flutter Developer Intern Assignment**.  
 > Designed for gig workers to organize, prioritize, and track their daily deliveries and tasks effortlessly.
@@ -14,16 +15,35 @@
 ---
 
 ## 📋 Table of Contents
-1. [Overview & Requirements Traceability](#-overview--requirements-traceability)
-2. [UI Architecture & App Screenshots](#-ui-architecture--app-screenshots)
-3. [System Architecture & Clean Principles](#-system-architecture--clean-principles)
-4. [Data Flow & State Lifecycle Diagram](#-data-flow--state-lifecycle-diagram)
-5. [Dual-Storage Sync: Cloud Firestore + Hive](#-dual-storage-sync-cloud-firestore--hive)
-6. [BLoC State Management Details](#-bloc-state-management-details)
-7. [Quick Evaluator Guide (1-Tap Demo)](#-quick-evaluator-guide-1-tap-demo)
-8. [Project Folder Structure](#-project-folder-structure)
-9. [Setup & Running Instructions](#-setup--running-instructions)
-10. [Test Suite & Quality Verification](#-test-suite--quality-verification)
+1. [Download & Test Release APK](#-download--test-release-apk)
+2. [Overview & Requirements Traceability](#-overview--requirements-traceability)
+3. [UI Architecture & App Screenshots](#-ui-architecture--app-screenshots)
+4. [System Architecture & Clean Principles](#-system-architecture--clean-principles)
+5. [Data Flow & State Lifecycle Diagram](#-data-flow--state-lifecycle-diagram)
+6. [Dual-Storage Sync: Cloud Firestore + Hive](#-dual-storage-sync-cloud-firestore--hive)
+7. [BLoC State Management Details](#-bloc-state-management-details)
+8. [Quick Evaluator Guide (1-Tap Demo)](#-quick-evaluator-guide-1-tap-demo)
+9. [Project Folder Structure](#-project-folder-structure)
+10. [Setup & Running Instructions](#-setup--running-instructions)
+11. [Test Suite & Quality Verification](#-test-suite--quality-verification)
+
+---
+
+## 📦 Download & Test Release APK
+
+For immediate evaluation on an Android phone or emulator without compiling the code, pre-built production release APKs are directly available in this repository:
+
+| Build Package | Architecture | Size | Direct Repository Download | Target Environment |
+| :--- | :--- | :--- | :---: | :--- |
+| **Universal Release** | `arm64`, `armeabi-v7a`, `x86_64` | ~54 MB | [📥 **Download Universal APK**](apk/app-release.apk) | All Android devices & emulators |
+| **ARM64 Optimized** | `arm64-v8a` | ~19 MB | [⚡ **Download ARM64 APK**](apk/app-arm64-v8a-release.apk) | Modern physical Android phones |
+
+### 📲 Quick Install:
+* **On Android Phone:** Download either APK link above directly on your phone and tap to install.
+* **Via ADB CLI:**
+  ```bash
+  adb install -r apk/app-release.apk
+  ```
 
 ---
 
