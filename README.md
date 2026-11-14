@@ -29,7 +29,7 @@
 
 ## 🎯 Overview & Requirements Traceability
 
-Every requirement defined in the WhatBytes assignment specification (`Gmail - Flutter Developer Assignment __ WhatBytes.pdf`) has been strictly fulfilled:
+Every requirement defined in the WhatBytes assignment specification has been strictly fulfilled:
 
 | Requirement Area | Assignment Specification | Implementation in This Project | Status |
 | :--- | :--- | :--- | :---: |
@@ -60,120 +60,6 @@ Every requirement defined in the WhatBytes assignment specification (`Gmail - Fl
 | 5. Create Task Bottom Sheet |
 | :---: |
 | <img src="assets/screenshots/04_create_task.png" width="320" alt="Task Creation Sheet"/> |
-
----
-
-### 📐 Screen Layout Blueprints
-
-The user interface follows the reference mockups attached in the assignment specification:
-
-### 1. Onboarding & Welcome (`Reference1.png`)
-```text
-+------------------------------------------+
-|  ~~~~ Curved Purple Gradient Banner ~~~~ |
-|                                          |
-|            +----------------+            |
-|            |   [✓] Check    |            |
-|            |   Card Hero    |            |
-|            +----------------+            |
-|                                          |
-|  Get things done.                        |
-|  Organize, prioritize, and complete      |
-|  your daily gig tasks effortlessly.      |
-|                                          |
-|  [ == • ]                        ( -> )  |
-+------------------------------------------+
-```
-- **Top Curved Banner:** Custom bezier curve clipper with indigo gradient (`#4338CA` to `#6366F1`).
-- **Hero Checkmark Card:** Elevated card with rounded corners and glowing indigo shadow.
-- **Floating Action Button:** Circular bottom-right button with forward arrow transitioning to auth.
-
-### 2. Login & 1-Tap Demo Mode (`Reference1.png`)
-```text
-+------------------------------------------+
-|  [✓] App Icon                            |
-|                                          |
-|  Let's get started!                      |
-|  Sign in to access your tasks & progress |
-|                                          |
-|  [ Email Field                         ] |
-|  [ Password Field                  (👁) ] |
-|                                          |
-|  [========== Log In Button ==========]   |
-|  [⚡ 1-Tap Demo Login (Evaluator Mode)]  |
-|                                          |
-|          (G)     ()     (f)             |
-|                                          |
-|      Don't have an account? Sign Up      |
-+------------------------------------------+
-```
-- **Pill Inputs:** Rounded borders, subtle fill, focused color indicators, and password visibility toggle.
-- **1-Tap Demo Login:** Instantly populates credentials (`demo@whatbytes.com`) and signs into local offline evaluation mode.
-- **Social Decor:** Circular bordered badges matching `Reference1.png`.
-
-### 3. Task Dashboard (`Reference2.png`) & Enhanced UI Craft
-```text
-+------------------------------------------+
-|  Good morning • Vineet             [->]  |
-|  Today, 14 Nov                     98%   |
-|  [=========== Shift Progress ===========]|
-|  [ 🔍 Search tasks...                  ] |
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-|  [ All (6) ] [ Incomplete (4) ] [ Completed (2) ]
-|  [ All ] [🔴 High] [🟠 Medium] [🟢 Low]  |
-|                                          |
-|  TODAY (2)                               |
-|  +-------------------------------------+ |
-|  | ( ) Schedule dentist appointment    | |
-|  |     10:00 AM • Routine checkup [LOW]| |
-|  +-------------------------------------+ |
-|  | (✓) Prepare team meeting   [MEDIUM] | |
-|  +-------------------------------------+ |
-|                                          |
-|  TOMORROW (2)                            |
-|  +-------------------------------------+ |
-|  | ( ) Call Charlotte          [HIGH]  | | <-- Swipe Left: [✏️ Edit] [🗑️ Delete]
-|  +-------------------------------------+ |
-|                                          |
-|      (List)          (+)        (📅)     | (Docked Center FAB)
-+------------------------------------------+
-```
-- **Curved Indigo Header:** Displays contextual shift greeting (`Good morning / afternoon / evening`), live formatted date, logout button, and glassmorphic pill search bar.
-- **Productivity Progress Bar:** Real-time animated emerald progress indicator tracking shift completion percentage.
-- **Segmented Filter Pills:** Modern pill tabs with reactive counter badges `(All, Incomplete, Completed)` and tinted priority badges (`High`, `Medium`, `Low`).
-- **Grouped Section Headers:** Automatically segments tasks into **Overdue**, **Today**, **Tomorrow**, **This week**, and **Later** with uppercase tracking and category badges.
-- **Micro-Interactions & Slidable Tiles:** Spring scale animation and haptic feedback on task completion checkboxes, plus smooth swipe-to-reveal quick actions (`flutter_slidable`).
-- **Smart Quick-Presets in Creation Sheet:** One-tap presets (`+1 Hour`, `This Afternoon`, `Tomorrow Morning`) alongside date & time pickers for rapid gig dispatching.
-- **Docked FAB & Curved Bottom Bar:** Central purple floating `+` button docked with `CircularNotchedRectangle`.
-
-### 4. Interactive Calendar View
-```text
-+------------------------------------------+
-|  Good morning • Vineet             [->]  |
-|  Today, 14 Nov                     98%   |
-|  [=========== Shift Progress ===========]|
-|  [ 🔍 Search tasks...                  ] |
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-|  November 2026   [Today]         (<) (>) |
-|  [Mon] [Tue] [Wed] [Thu*] [Fri] [Sat]    | (Horizontal Date Carousel)
-|   11    12    13    14     15    16      |
-|   •           •     ••            •      | (Task Priority Micro-Dots)
-|                                          |
-|  Thursday, 14 November      [1 / 2 Done] |
-|  +-------------------------------------+ |
-|  | ( ) Schedule dentist appointment    | |
-|  |     10:00 AM • Routine checkup [LOW]| |
-|  +-------------------------------------+ |
-|  | (✓) Prepare team meeting   [MEDIUM] | |
-|  +-------------------------------------+ |
-|                                          |
-|      (List)          (+)        (📅*)    | (Docked Center FAB)
-+------------------------------------------+
-```
-- **Month & Year Navigation:** Month skipping with `<` and `>` controls and a 1-tap `Today` quick reset.
-- **Horizontal Date Timeline Strip:** Auto-centering scrollable day selector displaying day abbreviations, date numerals, and priority micro-dots.
-- **Dynamic Day Breakdown:** Live stats pill showing completion metrics for the chosen date.
-- **1-Tap Date Scheduling:** Pre-fills the selected calendar date when adding tasks via the docked FAB or day empty state.
 
 ---
 
@@ -343,7 +229,7 @@ lib/
 │       └── presentation/
 │           ├── bloc/               # TaskBloc, TaskEvent, TaskState
 │           ├── pages/              # HomePage
-│           └── widgets/            # TasksHeader, FilterChipsBar, TaskTile, TaskGroupedList, TaskFormSheet
+│           └── widgets/            # TasksHeader, FilterChipsBar, TaskTile, TaskGroupedList, TaskFormSheet, TaskCalendarView
 ├── firebase_options.dart           # Auto-generated FlutterFire credentials
 ├── injection_container.dart        # GetIt service locator setup
 └── main.dart                       # App entrypoint with MultiBlocProvider & AuthGate
